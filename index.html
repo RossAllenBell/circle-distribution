@@ -1,0 +1,49 @@
+<html>
+<head>
+<script src="jquery-lib/jquery-2.0.3.js" ></script>
+<script src="circle.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var size = 150;
+        var circle = new Circle([size / 2, size / 2], size / 2);
+        var pointMethods = ['getRandomPointWithinIncorrect', 'getRandomPointWithinBruteForce', 'getRandomPointWithinProper'];
+        
+        $('canvas').each(function(i, canvas) {
+            canvas.width = size;
+            canvas.height = size;
+        
+            var ctx = canvas.getContext("2d");
+            ctx.beginPath();
+            ctx.arc(circle.origin[0], circle.origin[1], circle.radius, 0, Math.PI*2);
+            ctx.stroke()
+            ctx.closePath();
+            
+            for (var j=0; j<1000; j++) {
+                var point = circle[pointMethods[i]]();
+                ctx.beginPath();
+                ctx.arc(point[0], point[1], 2, 0, Math.PI*2);
+                ctx.fill()
+                ctx.closePath();
+            }
+        });
+    });
+</script>
+</head>
+<body>
+    Improper:
+    <br />
+    <canvas id='improperCircle'></canvas>
+    <br />
+    <br />
+    Brute Force:
+    <br />
+    <canvas id='bruteForceCircle'></canvas>
+    <br />
+    <br />
+    Proper:
+    <br />
+    <canvas id='properCircle'></canvas>
+    <br />
+    <br />
+</body>
+</html>
