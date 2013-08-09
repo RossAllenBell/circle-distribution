@@ -1,5 +1,5 @@
 function decEqual(actual, expected, tolerance) {
-    ok(Math.abs(actual - expected) <= tolerance);
+    ok(Math.abs(actual - expected) <= tolerance, 'Expected [' + expected + '], within tolerance [' + tolerance + '], but got [' + actual + ']');
 }
 
 function decsEqual(actual, expected, tolerance) {
@@ -69,28 +69,41 @@ test("circle can find point at theta and distance", function() {
     decsEqual(circle.getPointFrom(Math.PI * 2 * 0.25, 1), [1,0], 0.0001);
 });
 
-//these tests are a little odd, but they do the trick
+test("circle can generate a random point within using incorrect distribution", function() {
+    var circle = new Circle([ 11, 12 ], 5);
+    var distances = [];
+
+    for (var i=0; i<1000; i++) {
+    	distances.push(distance(circle.origin, circle.getRandomPointWithinIncorrect()));
+    }
+    
+    decEqual(distances.reduce(function(prev, curr) {
+    	return prev + curr;
+    }, 0) / distances.length, circle.radius * 0.5, circle.radius * 0.05);
+});
 
 test("circle can generate a random point within using incorrect distribution", function() {
     var circle = new Circle([ 11, 12 ], 5);
+    var distances = [];
 
     for (var i=0; i<1000; i++) {
-        equal(circle.containsPoint(circle.getRandomPointWithinIncorrect()), true);
+    	distances.push(distance(circle.origin, circle.getRandomPointWithinBruteForce()));
     }
+    
+    decEqual(distances.reduce(function(prev, curr) {
+    	return prev + curr;
+    }, 0) / distances.length, circle.radius * Math.sqrt(0.5), circle.radius * 0.05);
 });
 
-test("circle can generate a random point within using brute force", function() {
-    var circle = new Circle([ 13, 14 ], 6);
+test("circle can generate a random point within using incorrect distribution", function() {
+    var circle = new Circle([ 11, 12 ], 5);
+    var distances = [];
 
     for (var i=0; i<1000; i++) {
-        equal(circle.containsPoint(circle.getRandomPointWithinBruteForce()), true);
+    	distances.push(distance(circle.origin, circle.getRandomPointWithinProper()));
     }
-});
-
-test("circle can generate a random point within using proper distribution", function() {
-    var circle = new Circle([ 15, 16 ], 7);
-
-    for (var i=0; i<1000; i++) {
-        equal(circle.containsPoint(circle.getRandomPointWithinProper()), true);
-    }
+    
+    decEqual(distances.reduce(function(prev, curr) {
+    	return prev + curr;
+    }, 0) / distances.length, circle.radius * Math.sqrt(0.5), circle.radius * 0.05);
 });
